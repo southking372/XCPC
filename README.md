@@ -28,3 +28,8 @@ Each folder here stores all blogs for each person.
 
 
 
+## Operations
+
+### done
+
+In command line, key `done` and press enter, your changes will be added automatically, and they will be commit and pushed as well.
