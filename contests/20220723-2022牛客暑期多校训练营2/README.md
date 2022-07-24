@@ -4,9 +4,117 @@
 
 
 
+
+
 # 题解
 
 TO BE COMPLETED
+
+
+
+## D
+
+### yh
+
+这道题就是一个简单图论：将图边权取对，给所有边权重同时减去一个值，使得所有环都是负环，问这个值的最小值。
+
+spfa 思路可以求出一个图 “是否存在负环”，而要让所有环都是负环，则可以考虑 “是否存在正环”，于是将所有边取相反数。
+
+二分答案就解决了。
+
+```cpp
+#include<bits/stdc++.h>
+#define ll long long
+#define lll __int128
+using namespace std;
+
+inline int read() {
+    int x = 0, f = 1;
+    char ch = getchar();
+    while (ch < '0' || ch>'9') { if (ch == '-')f = -1;ch = getchar(); }
+    while (ch >= '0' && ch <= '9') { x = x * 10 + ch - '0';ch = getchar(); }
+    return x * f;
+}
+
+const ll MAX = 3e3;
+
+int n, m;
+vector<int> target[MAX];
+double len[MAX][MAX];
+
+bool in_queue[MAX];
+double min_dis[MAX];
+int path_len[MAX];
+
+bool exist_neg(double offset) {
+    queue<int> q;
+    for (int i = 1;i <= n;i++) {
+        q.push(i);
+        in_queue[i] = true;
+        min_dis[i] = 0;
+        path_len[i] = 0;
+    }
+    while (!q.empty()) {
+        int node = q.front();
+        q.pop();
+        in_queue[node] = false;
+        // found a negtive circle
+        if (path_len[node] >= n) return true;
+        for (int dst : target[node]) {
+            double w = len[node][dst] + offset;
+            if (min_dis[node] + w < min_dis[dst]) {
+                path_len[dst] = path_len[node] + 1;
+                min_dis[dst] = min_dis[node] + w;
+                // re-queue to update distance from dst
+                if (!in_queue[dst]) {
+                    q.push(dst);
+                    in_queue[dst] = true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool check(double value) {
+    return !exist_neg(value);
+}
+
+int main() {
+    n = read(), m = read();
+    for (int i = 0;i <= n;i++) {
+        for (int j = 0;j <= n;j++) {
+            len[i][j] = 1e100;
+        }
+    }
+    for (int i = 0;i < m;i++) {
+        int a = read(), b = read(), c = read(), d = read();
+        double val = -log(c / (double)a);
+        target[b].push_back(d);
+        len[b][d] = min(val, len[b][d]);
+    }
+    double l = -1e3, r = 0;
+    while (r - l > 1e-7) {
+        double m = (l + r) / 2;
+        if (check(-m)) l = m;
+        else r = m;
+    }
+    printf("%.10lf", exp(l));
+}
+
+/*
+
+4 5
+1 1 2 2
+1 2 4 3
+1 3 2 4
+1 4 1 1
+1 2 3 1
+
+0.4082482905
+
+*/
+```
 
 
 
