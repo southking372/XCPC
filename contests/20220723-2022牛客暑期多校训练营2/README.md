@@ -161,7 +161,7 @@ int main() {
 
 这是个最小二乘解线性回归。公式贴在这：
 
-![image-20220724003914466](README.assets/image-20220724003914466.png)
+![image-20220724194847656](README.assets/image-20220724194847656.png)
 
 这个题就离谱，tnnd，卡精度，后面用 `__int128` 才过。
 
@@ -225,7 +225,7 @@ int main() {
 
 > 摘自 OI-WIKI
 
-![image-20220724124434919](README.assets/image-20220724124434919.png)
+![image-20220724194829382](README.assets/image-20220724194829382.png)
 
 #### 回到题目
 
