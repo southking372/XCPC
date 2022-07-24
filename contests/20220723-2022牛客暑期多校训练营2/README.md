@@ -8,11 +8,13 @@
 
 TO BE COMPLETED
 
+
+
 ## G
 
 ### yh
 
-G 是个构造题。考虑分组，组内递增，组间递减，最小值为根号。
+G 是个构造题。考虑分组，组内递增，组间递减，最小值为根号。**至于为什么，参见 Solution。**
 
 ```cpp
 #include<bits/stdc++.h>
@@ -42,6 +44,8 @@ int main() {
     }
 }
 ```
+
+
 
 ## J
 
@@ -102,4 +106,75 @@ int main() {
     }
 }
 ```
+
+
+
+## K
+
+### yh
+
+#### 最长公共子序列（LCS）
+
+> 摘自 OI-WIKI
+
+![image-20220724124434919](README.assets/image-20220724124434919.png)
+
+#### 回到题目
+
+令 `dp[x][y][z]` 表示 a 的前 y 位是 b 的前 x 位的子序列，且 b 的前 x 位中左括号数比右括号数多 z 的总情况数。因为构造的 b 是一个符合要求的括号序列，故中间过程 z 一定是一个非负整数（栈）。
+
+```cpp
+#include<bits/stdc++.h>
+#define ll long long
+#define lll __int128
+using namespace std;
+
+const ll MOD = 1e9 + 7;
+
+void append(ll& dst, ll src) {
+    dst %= MOD;
+    dst += src;
+    dst %= MOD;
+}
+
+char a[300];
+ll dp[300][300][300] = { 0 };
+int main() {
+    int t;
+    scanf("%d", &t);
+    while (t--) {
+        int n, m;
+        scanf("%d%d%s", &n, &m, a);
+        for (int x = 0;x <= m + 1;x++) for (int y = 0;y <= m + 1;y++) for (int z = 0;z <= m + 1;z++) dp[x][y][z] = 0;
+        dp[0][0][0] = 1;
+        for (int x = 0;x < m;x++) {
+            for (int y = 0;y <= x && y < n;y++) {
+                for (int z = 0;z <= x;z++) {
+                    if (a[y] == '(') {
+                        append(dp[x + 1][y + 1][z + 1], dp[x][y][z]); // b[x] == '('
+                        if (z > 0) append(dp[x + 1][y][z - 1], dp[x][y][z]); // b[x] == ')'
+                    }
+                    else {
+                        append(dp[x + 1][y][z + 1], dp[x][y][z]); // b[x] == '('
+                        if (z > 0) append(dp[x + 1][y + 1][z - 1], dp[x][y][z]); // b[x] == ')'
+                    }
+                }
+            }
+            // for y == n:
+            for (int z = 0;z <= x;z++) {
+                append(dp[x + 1][n][z + 1], dp[x][n][z]); // b[x] == '('
+                if (z > 0) append(dp[x + 1][n][z - 1], dp[x][n][z]); // b[x] == ')'
+            }
+        }
+        printf("%lld\n", (dp[m][n][0] % MOD + MOD) % MOD);
+    }
+}
+```
+
+计算 dp 可以采取两种方案：
+
+- 拉式：通过已经算出的 dp 值计算当前的 dp；
+- 推式：当前的 dp 值已经算出，于是计算它对未来 dp 值的贡献。
+
+本题采用后者更方便。
 
